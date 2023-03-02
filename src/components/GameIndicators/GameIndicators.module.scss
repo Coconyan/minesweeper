@@ -1,0 +1,30 @@
+.gameIndicators {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: gainsboro 5px solid;
+  width: 100%;
+}
+
+.mineCounter {
+  display: flex;
+}
+
+.time {
+  display: flex;
+}
+
+.digit {
+  width: 14px;
+  height: 23px;
+}
+
+.character {
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.characterDefault {
+  background: url(../../sprite.png) 0 59px;
+}

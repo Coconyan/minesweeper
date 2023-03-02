@@ -1,0 +1,21 @@
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+}
+
+.death {
+  background-color: #faa;
+}
+
+.win {
+  background-color: #ffb;
+}
+
+.default {
+  background: url(../../sprite.png) 0 33px;
+}
+
+
