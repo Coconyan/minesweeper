@@ -1,21 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
+import { FULL_SIZE, GameStatus, MINE, MINE_COUNT, SIZE } from '../../const';
+import { useAppDispatch } from '../../hooks';
+import { setGameStatus } from '../../store/game/game';
 import { Mask } from '../../types/mask';
 import { GameFieldCell } from '../GameFieldCell/GameFieldCell';
 import { GameIndicators } from '../GameIndicators/GameIndicators';
 import cls from './GameField.module.scss';
 
-interface GameFieldProps {
-  className?: string;
-}
-
-export const SIZE = 16;
-export const FULL_SIZE = SIZE * SIZE;
-export const MINE = -1;
-export const MINE_COUNT = 3;
-
-function createField(size: number, firstClickArrayNumber?: number): number[] {
+const createField = (size: number, firstClickArrayNumber?: number): number[] => {
   const field: number[] = new Array(size * size).fill(0);
-  console.log('create field');
 
   function inc(x: number, y: number) {
     if (x >= 0 && x < size && y >= 0 && y < size) {
@@ -48,33 +41,39 @@ function createField(size: number, firstClickArrayNumber?: number): number[] {
   return field;
 }
 
-export const GameField: React.FC<GameFieldProps> = (props) => {
+export const GameField: React.FC = () => {
+  const dispatch = useAppDispatch();
   const dimension = new Array(SIZE).fill(null);
 
-  const [death, setDeath] = useState(false);
-  const [win, setWin] = useState(false);
   const [field, setField] = useState<number[]>([]);
   const [mask, setMask] = useState<Mask[]>(() => new Array(FULL_SIZE).fill(Mask.Fill));
-  const [isFirstClick, setIsFirstClick] = useState(true);
+  const [isFirstClick, setIsFirstClick] = useState<boolean>(true);
   const flagsCount = mask.filter((cell) => cell === 2).length;
 
   const flagsAndFill = useMemo(() => {
     let count = 0;
 
     for (let i = 0; i < mask.length; i++) {
-      if (mask[i] === Mask.Transparent) {
+      if (mask[i] === Mask.Transparent && field[i] !== MINE) {
         count++;
       }
     }
-
     return count;
   },
     [mask],
   );
 
+  const gameReset = () => {
+    dispatch(setGameStatus(GameStatus.Play));
+    setIsFirstClick(true);
+    setField([]);
+    setMask(new Array(FULL_SIZE).fill(Mask.Fill));
+  }
+
   useEffect(() => {
     if (flagsAndFill === (FULL_SIZE - MINE_COUNT)) {
-      setWin(true);
+      console.log(flagsAndFill, (FULL_SIZE - MINE_COUNT));
+      dispatch(setGameStatus(GameStatus.Win));
     }
   }, [flagsAndFill]);
 
@@ -82,10 +81,12 @@ export const GameField: React.FC<GameFieldProps> = (props) => {
     <div className={cls.main}>
       <GameIndicators
         flagsCount={flagsCount}
+        gameReset={gameReset}
+        isFirstClick={isFirstClick}
       />
       {dimension.map((_, y) => {
         return (<div key={y} className={cls.row}>
-          {dimension.map((_, x) => 
+          {dimension.map((_, x) =>
             <GameFieldCell
               key={`${y}${x}`}
               x={x}
@@ -93,13 +94,11 @@ export const GameField: React.FC<GameFieldProps> = (props) => {
               mask={mask}
               field={field}
               setMask={setMask}
-              setDeath={setDeath}
-              win={win}
-              death={death}
               setField={setField}
               createField={createField}
               isFirstClick={isFirstClick}
               setIsFirstClick={setIsFirstClick}
+              flagsCount={flagsCount}
             />
           )}
         </div>);

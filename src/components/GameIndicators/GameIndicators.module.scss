@@ -20,11 +20,27 @@
 }
 
 .character {
-  width: 26px;
-  height: 26px;
+  width: 27px;
+  height: 27px;
   cursor: pointer;
 }
 
-.characterDefault {
-  background: url(../../sprite.png) 0 59px;
+.character:active {
+  background: url(../../sprite.png) -26px 60px;
+}
+
+.play {
+  background: url(../../sprite.png) 0 60px;
+}
+
+.win {
+  background: url(../../sprite.png) -81px 60px;
+}
+
+.lose {
+  background: url(../../sprite.png) -108px 60px;
+}
+
+.fear {
+  background: url(../../sprite.png) -54px 60px;
 }

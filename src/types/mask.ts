@@ -3,4 +3,6 @@ export enum Mask {
   Fill,
   Flag,
   Question,
+  NotBomb,
+  DetonatedBomd,
 }

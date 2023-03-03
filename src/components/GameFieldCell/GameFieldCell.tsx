@@ -1,37 +1,42 @@
 import { Mask } from '../../types/mask';
-import { MINE, SIZE } from '../GameField/GameField';
 import cls from './GameFieldCell.module.scss';
 import './GameFieldCell.css';
+import { GameStatus, MINE, MINE_COUNT, SIZE } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { getGameStatus } from '../../store/game/selectors';
+import { setFearMode, setGameStatus } from '../../store/game/game';
 
 interface GameFieldCellProps {
-  win: boolean;
-  death: boolean;
   x: number;
   y: number;
   mask: Mask[];
   setMask: React.Dispatch<React.SetStateAction<Mask[]>>;
   field: number[];
-  setDeath: React.Dispatch<React.SetStateAction<boolean>>;
-  setField: any;
-  createField: any;
+  setField: React.Dispatch<React.SetStateAction<number[]>>;
+  createField: (size: number, firstClickArrayNumber?: number) => number[];
   isFirstClick: boolean;
   setIsFirstClick: React.Dispatch<React.SetStateAction<boolean>>;
+  flagsCount: number;
 }
 
 export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
-  const { win, death, x, y, mask, setMask, field, setDeath, setField, createField, isFirstClick, setIsFirstClick } = props;
-  let testField = field; // todo временное решение для функциональности первого клика без бомб
+  const { x, y, mask, setMask, field, setField, createField, isFirstClick, setIsFirstClick, flagsCount } = props;
+  let testField = field;
 
-  const cellClass = death ? cls.death : win ? cls.win : cls.default;
+  const gameStatus = useAppSelector(getGameStatus);
+  const dispatch = useAppDispatch();
 
-  const cellClickHandler = async () => {
+  const cellClass = cls.default;
+  let cellAdditionalClass = 'cell-n';
+
+  const cellClickHandler = () => {
     if (isFirstClick) {
       setIsFirstClick(false);
       testField = createField(SIZE, y * SIZE + x);
       setField(testField);
     }
 
-    if (win || death) return;
+    if (gameStatus === GameStatus.Win || gameStatus === GameStatus.Lose) return;
 
     if (mask[y * SIZE + x] === Mask.Transparent) return;
 
@@ -60,10 +65,20 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
       clear(x, y - 1);
     }
 
+    // Если наша ячейка с миной
     if (testField[y * SIZE + x] === MINE) {
-      mask.forEach((_, i) => mask[i] = Mask.Transparent);
+      mask.forEach((_, i) => {
+        if (field[i] === MINE && mask[i] !== Mask.Flag && mask[i] !== Mask.Question) {
+          mask[i] = Mask.Transparent;
+        }
+        if (mask[i] === Mask.Flag && field[i] !== MINE) {
+          mask[i] = Mask.NotBomb;
+        }
+      });
 
-      setDeath(true);
+      mask[y * SIZE + x] = Mask.DetonatedBomd;
+
+      dispatch(setGameStatus(GameStatus.Lose));
     }
 
     setMask((prev) => [...prev]);
@@ -73,9 +88,11 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (win || death) return;
+    if (gameStatus === GameStatus.Win || gameStatus === GameStatus.Lose) return;
 
     if (mask[y * SIZE + x] === Mask.Transparent) return;
+
+    if (mask[y * SIZE + x] !== Mask.Flag && flagsCount === MINE_COUNT) return;
 
     if (mask[y * SIZE + x] === Mask.Fill) {
       mask[y * SIZE + x] = Mask.Flag;
@@ -88,17 +105,27 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
     setMask((prev) => [...prev]);
   }
 
+  const cellOnMouseDownHandler = () => {
+    if (mask[y * SIZE + x] !== Mask.Transparent) {
+      dispatch(setFearMode(true));
+    }
+  };
+
+  if (mask[y * SIZE + x] === Mask.Transparent && testField[y * SIZE + x] !== Mask.Transparent) {
+    cellAdditionalClass += testField[y * SIZE + x];
+  }
+
   return (
     <div
-      className={`${cls.cell} ${cellClass} mask-${mask[y * SIZE + x]}`}
+      className={`${cls.cell} ${cellClass} mask-${mask[y * SIZE + x]} ${cellAdditionalClass} ${gameStatus !== GameStatus.Play ? cls.gameOver : ''}`}
       onClick={cellClickHandler}
+      onMouseDown={cellOnMouseDownHandler}
+      onMouseUp={() => dispatch(setFearMode(false))}
       onContextMenu={cellRightClickHandler}
     >{
         mask[y * SIZE + x] !== Mask.Transparent
-          ? mask[y * SIZE + x]
-          : testField[y * SIZE + x] === MINE
-            ? "💣"
-            : testField[y * SIZE + x]
+          ? ''
+          : testField[y * SIZE + x] === Mask.Transparent
       }
     </div>);
 };

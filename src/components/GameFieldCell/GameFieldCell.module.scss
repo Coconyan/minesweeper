@@ -4,18 +4,13 @@
   align-items: center;
   width: 16px;
   height: 16px;
+  user-select: none;
 }
 
-.death {
-  background-color: #faa;
-}
-
-.win {
-  background-color: #ffb;
+.gameOver {
+  pointer-events: none;
 }
 
 .default {
   background: url(../../sprite.png) 0 33px;
 }
-
-
