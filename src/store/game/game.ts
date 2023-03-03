@@ -5,6 +5,7 @@ import { Game } from '../../types/state';
 const initialState: Game = {
   gameStatus: GameStatus.Play,
   fearMode: false,
+  clickCoordinates: [null, null]
 };
 
 export const game = createSlice({
@@ -16,8 +17,11 @@ export const game = createSlice({
     },
     setFearMode: (state, action) => {
       state.fearMode = action.payload;
+    },
+    setClickCoordinates: (state, action) => {
+      state.clickCoordinates = action.payload;
     }
   },
 });
 
-export const { setGameStatus, setFearMode } = game.actions;
+export const { setGameStatus, setFearMode, setClickCoordinates } = game.actions;

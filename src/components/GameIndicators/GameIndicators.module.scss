@@ -20,13 +20,13 @@
 }
 
 .character {
-  width: 27px;
-  height: 27px;
+  width: 26px;
+  height: 26px;
   cursor: pointer;
 }
 
 .character:active {
-  background: url(../../sprite.png) -26px 60px;
+  background: url(../../sprite.png) -27px 60px;
 }
 
 .play {

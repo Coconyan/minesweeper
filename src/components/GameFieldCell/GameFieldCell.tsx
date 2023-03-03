@@ -3,8 +3,8 @@ import cls from './GameFieldCell.module.scss';
 import './GameFieldCell.css';
 import { GameStatus, MINE, MINE_COUNT, SIZE } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { getGameStatus } from '../../store/game/selectors';
-import { setFearMode, setGameStatus } from '../../store/game/game';
+import { getClickCoordinates, getGameStatus } from '../../store/game/selectors';
+import { setClickCoordinates, setFearMode, setGameStatus } from '../../store/game/game';
 
 interface GameFieldCellProps {
   x: number;
@@ -24,9 +24,11 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
   let testField = field;
 
   const gameStatus = useAppSelector(getGameStatus);
+  const clickCoordinates = useAppSelector(getClickCoordinates);
   const dispatch = useAppDispatch();
+  console.log(clickCoordinates);
 
-  const cellClass = cls.default;
+  const cellDefaultClass = `${cls.cell} ${cls.default}`;
   let cellAdditionalClass = 'cell-n';
 
   const cellClickHandler = () => {
@@ -110,6 +112,7 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
   }
 
   const cellOnMouseDownHandler = () => {
+    dispatch(setClickCoordinates([x, y]));
     if (mask[y * SIZE + x] !== Mask.Transparent) {
       dispatch(setFearMode(true));
     }
@@ -119,17 +122,20 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
     cellAdditionalClass += testField[y * SIZE + x];
   }
 
+  if (clickCoordinates[0] === x && clickCoordinates[1] === y) {
+    if (mask[y * SIZE + x] === Mask.Question) {
+      cellAdditionalClass += ' mask-3-active'; // todo добавить констант, убрать магические значения
+    } else {
+      cellAdditionalClass += ' mask-0';
+    }
+  }
+
   return (
     <div
-      className={`${cls.cell} ${cellClass} mask-${mask[y * SIZE + x]} ${cellAdditionalClass} ${gameStatus !== GameStatus.Play ? cls.gameOver : ''}`}
+      className={`${cellDefaultClass} mask-${mask[y * SIZE + x]} ${cellAdditionalClass} ${gameStatus !== GameStatus.Play ? cls.gameOver : ''}`} // todo возможно кидать все классы через функцию
       onClick={cellClickHandler}
       onMouseDown={cellOnMouseDownHandler}
-      onMouseUp={() => dispatch(setFearMode(false))}
+      onMouseUp={() => {dispatch(setFearMode(false));dispatch(setClickCoordinates([null, null]))}} // todo вынести в отдельную функцию
       onContextMenu={cellRightClickHandler}
-    >{
-        mask[y * SIZE + x] !== Mask.Transparent
-          ? ''
-          : testField[y * SIZE + x] === Mask.Transparent
-      }
-    </div>);
+    ></div>);
 };

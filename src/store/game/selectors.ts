@@ -3,3 +3,4 @@ import { State } from '../../types/state';
 
 export const getGameStatus = (state: State): GameStatus => state[NameSpace.game].gameStatus;
 export const getFearMode = (state: State): boolean => state[NameSpace.game].fearMode;
+export const getClickCoordinates = (state: State): number[] | null[] => state[NameSpace.game].clickCoordinates;
