@@ -63,6 +63,10 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
       clear(x - 1, y);
       clear(x, y + 1);
       clear(x, y - 1);
+      clear(x + 1, y - 1);
+      clear(x - 1, y - 1);
+      clear(x + 1, y + 1);
+      clear(x - 1, y + 1);
     }
 
     // Если наша ячейка с миной
