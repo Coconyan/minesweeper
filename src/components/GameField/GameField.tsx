@@ -72,7 +72,6 @@ export const GameField: React.FC = () => {
 
   useEffect(() => {
     if (flagsAndFill === (FULL_SIZE - MINE_COUNT)) {
-      console.log(flagsAndFill, (FULL_SIZE - MINE_COUNT));
       dispatch(setGameStatus(GameStatus.Win));
     }
   }, [dispatch, flagsAndFill]);
