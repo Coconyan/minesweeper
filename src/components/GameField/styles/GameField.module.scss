@@ -1,0 +1,15 @@
+.main {
+  width: 100%;
+}
+
+.gameFieldWrapper {
+  border-top: var(--border-dark);
+  border-left: var(--border-dark);
+  border-bottom: var(--border-light);
+  border-right: var(--border-light);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}

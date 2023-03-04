@@ -1,0 +1,52 @@
+.gameIndicators {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--main-gray-color);
+  width: 100%;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+  border-top: var(--border-dark);
+  border-left: var(--border-dark);
+  border-bottom: var(--border-light);
+  border-right: var(--border-light);
+}
+
+.mineCounter {
+  display: flex;
+}
+
+.time {
+  display: flex;
+}
+
+.digit {
+  width: var(--digit-width);
+  height: var(--digit-height);
+}
+
+.character {
+  width: var(--character-width);
+  height: var(--character-height);
+  cursor: pointer;
+}
+
+.character:active {
+  background: url(../../../sprite.png) -27px 60px;
+}
+
+.play {
+  background: url(../../../sprite.png) 0 60px;
+}
+
+.win {
+  background: url(../../../sprite.png) -81px 60px;
+}
+
+.lose {
+  background: url(../../../sprite.png) -108px 60px;
+}
+
+.fear {
+  background: url(../../../sprite.png) -54px 60px;
+}

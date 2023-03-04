@@ -1,7 +1,8 @@
 import { useAppDispatch } from '../../hooks';
 import { setClickCoordinates, setFearMode } from '../../store/game/game';
 import { GameField } from '../GameField/GameField';
-import cls from './App.module.scss';
+import cls from './styles/App.module.scss';
+import './styles/variables.scss';
 
 function App() {
   const dispatch = useAppDispatch();

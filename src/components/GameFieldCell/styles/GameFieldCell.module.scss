@@ -2,8 +2,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 16px;
-  height: 16px;
+  width: var(--cell-width);
+  height: var(--cell-height);
   user-select: none;
 }
 
@@ -12,5 +12,5 @@
 }
 
 .default {
-  background: url(../../sprite.png) 0 33px;
+  background: url(../../../sprite.png) 0 33px;
 }

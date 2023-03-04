@@ -1,10 +1,11 @@
 import { Mask } from '../../types/mask';
-import cls from './GameFieldCell.module.scss';
-import './GameFieldCell.css';
+import cls from './styles/GameFieldCell.module.scss';
+import './styles/GameFieldCell.css';
 import { GameStatus, MINE, MINE_COUNT, SIZE } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { getClickCoordinates, getGameStatus } from '../../store/game/selectors';
 import { setClickCoordinates, setFearMode, setGameStatus } from '../../store/game/game';
+import { cellTemplate, questionClickActiveClass, defaulClickActiveClass, maskTemplate } from './const';
 
 interface GameFieldCellProps {
   x: number;
@@ -21,21 +22,20 @@ interface GameFieldCellProps {
 
 export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
   const { x, y, mask, setMask, field, setField, createField, isFirstClick, setIsFirstClick, flagsCount } = props;
-  let testField = field;
+  let syncField = field;
 
   const gameStatus = useAppSelector(getGameStatus);
   const clickCoordinates = useAppSelector(getClickCoordinates);
   const dispatch = useAppDispatch();
-  console.log(clickCoordinates);
 
   const cellDefaultClass = `${cls.cell} ${cls.default}`;
-  let cellAdditionalClass = 'cell-n';
+  let cellAdditionalClass = cellTemplate;
 
   const cellClickHandler = () => {
     if (isFirstClick) {
       setIsFirstClick(false);
-      testField = createField(SIZE, y * SIZE + x);
-      setField(testField);
+      syncField = createField(SIZE, y * SIZE + x);
+      setField(syncField);
     }
 
     if (gameStatus === GameStatus.Win || gameStatus === GameStatus.Lose) return;
@@ -59,7 +59,7 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
 
       mask[y * SIZE + x] = Mask.Transparent;
 
-      if (testField[y * SIZE + x] !== 0) continue;
+      if (syncField[y * SIZE + x] !== 0) continue;
 
       clear(x + 1, y);
       clear(x - 1, y);
@@ -72,7 +72,7 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
     }
 
     // Если наша ячейка с миной
-    if (testField[y * SIZE + x] === MINE) {
+    if (syncField[y * SIZE + x] === MINE) {
       mask.forEach((_, i) => {
         if (field[i] === MINE && mask[i] !== Mask.Flag && mask[i] !== Mask.Question) {
           mask[i] = Mask.Transparent;
@@ -118,24 +118,34 @@ export const GameFieldCell: React.FC<GameFieldCellProps> = (props) => {
     }
   };
 
-  if (mask[y * SIZE + x] === Mask.Transparent && testField[y * SIZE + x] !== Mask.Transparent) {
-    cellAdditionalClass += testField[y * SIZE + x];
+  const cellOnMouseUpHandler = () => {
+    dispatch(setFearMode(false));
+    dispatch(setClickCoordinates([null, null]));
   }
 
-  if (clickCoordinates[0] === x && clickCoordinates[1] === y) {
-    if (mask[y * SIZE + x] === Mask.Question) {
-      cellAdditionalClass += ' mask-3-active'; // todo добавить констант, убрать магические значения
-    } else {
-      cellAdditionalClass += ' mask-0';
+
+  const createCellClass = () => {
+    if (mask[y * SIZE + x] === Mask.Transparent && syncField[y * SIZE + x] !== Mask.Transparent) {
+      cellAdditionalClass += syncField[y * SIZE + x];
     }
+
+    if (clickCoordinates[0] === x && clickCoordinates[1] === y) {
+      if (mask[y * SIZE + x] === Mask.Question) {
+        cellAdditionalClass += ' ' + questionClickActiveClass;
+      } else {
+        cellAdditionalClass += ' ' + defaulClickActiveClass;
+      }
+    }
+
+    return `${cellDefaultClass} ${maskTemplate}${mask[y * SIZE + x]} ${cellAdditionalClass} ${gameStatus !== GameStatus.Play ? cls.gameOver : ''}`
   }
 
   return (
     <div
-      className={`${cellDefaultClass} mask-${mask[y * SIZE + x]} ${cellAdditionalClass} ${gameStatus !== GameStatus.Play ? cls.gameOver : ''}`} // todo возможно кидать все классы через функцию
+      className={createCellClass()}
       onClick={cellClickHandler}
       onMouseDown={cellOnMouseDownHandler}
-      onMouseUp={() => {dispatch(setFearMode(false));dispatch(setClickCoordinates([null, null]))}} // todo вынести в отдельную функцию
+      onMouseUp={cellOnMouseUpHandler}
       onContextMenu={cellRightClickHandler}
     ></div>);
 };

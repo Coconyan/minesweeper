@@ -5,7 +5,7 @@ import { setGameStatus } from '../../store/game/game';
 import { Mask } from '../../types/mask';
 import { GameFieldCell } from '../GameFieldCell/GameFieldCell';
 import { GameIndicators } from '../GameIndicators/GameIndicators';
-import cls from './GameField.module.scss';
+import cls from './styles/GameField.module.scss';
 
 const createField = (size: number, firstClickArrayNumber?: number): number[] => {
   const field: number[] = new Array(size * size).fill(0);
@@ -60,7 +60,7 @@ export const GameField: React.FC = () => {
     }
     return count;
   },
-    [mask],
+    [field, mask],
   );
 
   const gameReset = () => {
@@ -75,7 +75,7 @@ export const GameField: React.FC = () => {
       console.log(flagsAndFill, (FULL_SIZE - MINE_COUNT));
       dispatch(setGameStatus(GameStatus.Win));
     }
-  }, [flagsAndFill]);
+  }, [dispatch, flagsAndFill]);
 
   return (
     <div className={cls.main}>
@@ -84,25 +84,27 @@ export const GameField: React.FC = () => {
         gameReset={gameReset}
         isFirstClick={isFirstClick}
       />
-      {dimension.map((_, y) => {
-        return (<div key={y} className={cls.row}>
-          {dimension.map((_, x) =>
-            <GameFieldCell
-              key={`${y}${x}`}
-              x={x}
-              y={y}
-              mask={mask}
-              field={field}
-              setMask={setMask}
-              setField={setField}
-              createField={createField}
-              isFirstClick={isFirstClick}
-              setIsFirstClick={setIsFirstClick}
-              flagsCount={flagsCount}
-            />
-          )}
-        </div>);
-      })}
+      <div className={cls.gameFieldWrapper}>
+        {dimension.map((_, y) => {
+          return (<div key={y} className={cls.row}>
+            {dimension.map((_, x) =>
+              <GameFieldCell
+                key={`${y}${x}`}
+                x={x}
+                y={y}
+                mask={mask}
+                field={field}
+                setMask={setMask}
+                setField={setField}
+                createField={createField}
+                isFirstClick={isFirstClick}
+                setIsFirstClick={setIsFirstClick}
+                flagsCount={flagsCount}
+              />
+            )}
+          </div>);
+        })}
+      </div>
     </div>
   )
 }

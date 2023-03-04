@@ -1,0 +1,61 @@
+/* classes for mask */
+.mask-0 {
+  background: url(../../../sprite.png) -17px 33px;
+}
+
+.mask-2 {
+  background: url(../../../sprite.png) -34px 33px;
+}
+
+.mask-3 {
+  background: url(../../../sprite.png) -51px 33px;
+}
+
+.mask-3-active {
+  background: url(../../../sprite.png) -68px 33px;
+}
+
+.mask-4 {
+  background: url(../../../sprite.png) -119px 33px;
+}
+
+.mask-5 {
+  background: url(../../../sprite.png) -102px 33px;
+}
+
+/* cell classes */
+.cell-n-1 {
+  background: url(../../../sprite.png) -85px 33px;
+}
+
+.cell-n1 {
+  background: url(../../../sprite.png) 0 16px;
+}
+
+.cell-n2 {
+  background: url(../../../sprite.png) -17px 16px;
+}
+
+.cell-n3 {
+  background: url(../../../sprite.png) -34px 16px;
+}
+
+.cell-n4 {
+  background: url(../../../sprite.png) -51px 16px;
+}
+
+.cell-n5 {
+  background: url(../../../sprite.png) -68px 16px;
+}
+
+.cell-n6 {
+  background: url(../../../sprite.png) -85px 16px;
+}
+
+.cell-n7 {
+  background: url(../../../sprite.png) -102px 16px;
+}
+
+.cell-n8 {
+  background: url(../../../sprite.png) -119px 16px;
+}

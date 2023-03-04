@@ -1,5 +1,5 @@
-import cls from './GameIndicators.module.scss';
-import './GameIndicators.css';
+import cls from './styles/GameIndicators.module.scss';
+import './styles/GameIndicators.css';
 import { useEffect, useState } from 'react';
 import { GameStatus, MINE_COUNT } from '../../const';
 import { useAppSelector } from '../../hooks';
